@@ -3,21 +3,20 @@
         {
             "id_barang": 1,
             "nama_barang": "Paket A",
-            "stok" : 10,
-            "harga" : 50000
-
+            "stok": 10,
+            "harga": 50000
         },
         {
             "id_barang": 2,
             "nama_barang": "Paket B",
-            "stok" : 20,
-            "harga" : 70000
+            "stok": 15,
+            "harga": 70000
         },
         {
             "id_barang": 3,
             "nama_barang": "Paket C",
-            "stok" : 5,
-            "harga" : 60000
+            "stok": 0,
+            "harga": 60000
         }
     ]
 }

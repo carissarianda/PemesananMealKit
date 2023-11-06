@@ -1,7 +1,7 @@
 # Tugas TST - PemesananMealKit
 **18221120 - Carissa Tabina Rianda**
 
-Program Pemesanan Meal Kit menggunakan API dengan output berupa pesanan berhasil ditambah atau gagal
+Program Pemesanan Meal Kit menggunakan API yang digunakan untuk menambah data pesanan jika seseorang terdaftar sebagai user. Pada program ini akan diminta id user, nama user, id barang, nama barang, dan jumlah barang. Jika barang yang akan dibeli melebihi stok, program akan mengeluarkan output bahwa pesanan gagal dilakukan. Jika stok cukup, program akan mengeluarkan output bahwa pesanan berhasil dilakukan dan stok barang akan berkurang pada data barang.
 
  Library yang digunakan yaitu
  1. fastapi
