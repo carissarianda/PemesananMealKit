@@ -2,8 +2,8 @@
  Program Pemesanan Meal Kit menggunakan API dengan output berupa pesanan berhasil ditambah atau gagal
 
  Library yang digunakan yaitu
- •	fastapi
- •	uvicorn
+ 1. fastapi
+ 2. uvicorn
 
 Cara Run Via Virtual Enviroment (venv) Python -- Windows
 1. Pull repository ini ke dalam local folder
