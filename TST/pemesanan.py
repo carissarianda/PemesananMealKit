@@ -97,6 +97,17 @@ async def add_hasil_pemesanan(item: InputUser):
         return "Barang tidak tersedia"
     if not stok_tersedia :
         return "Anda tidak berhasil memesan barang"
+
+
+# Update stok barang di dalam data_barang.json
+    for barang in data_barang['data_barang']:
+        if barang['id_barang'] == data['id_barang']:
+            barang['stok'] -= jumlah
+
+# Simpan perubahan stok ke dalam file data_barang.json
+    with open("data_barang.json", "w") as write_file:
+        json.dump(data_barang, write_file)
+
 	
     for user in user_pemesanan['user_pemesanan'] :
         if user['id_user'] == data['id_user']:
@@ -115,6 +126,8 @@ async def add_hasil_pemesanan(item: InputUser):
             hasil_pemesanan['hasil_pemesanan'].append(result)
             save_result_to_json(hasil_pemesanan,"hasil_pemesanan.json")
             return hasilPemesanan
+        
+    
 
         
     raise HTTPException(
