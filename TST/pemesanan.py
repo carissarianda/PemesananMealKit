@@ -1,6 +1,16 @@
-from fastapi import FastAPI, HTTPException
-import json
+from datetime import datetime, timedelta
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from pydantic import BaseModel
+import json
+
+SECRET_KEY = "d0ba1b2795d465f636c24af3980de67546109235434a71c90f474b21ea61899f7"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 class InputUser(BaseModel):
     id_user : int
@@ -10,8 +20,31 @@ class InputUser(BaseModel):
     jumlah : int
     
 class DataUser(BaseModel):
-	id_user: int
-	nama_user: str
+    username : str
+    nama_user: str
+    disabled: bool or None = None
+    
+db = {
+    "carissa": {
+        "username": "carissa",
+        "nama_user": "carissa",
+        "hashed_password": "$2b$12$eYicYMBGBlvM/jGJe9VXP.k7ujIhD8fSVkgi1T.nyOb0Xrq/ienia",
+        "disabled": False,
+    }
+}
+ 
+class Token(BaseModel):
+    access_token : str
+    token_type : str
+    
+class TokenData(BaseModel):
+    username: str or None = None
+    
+class UserInDB(DataUser):
+    hashed_password: str
+    
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated = "auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI()
 
@@ -23,11 +56,93 @@ with open("hasil_pemesanan.json","r") as read_file:
 
 with open("data_barang.json","r") as read_file:
 	data_barang = json.load(read_file)
- 
-# Save ke json setiap hasil_pemesanan dilakukan
-def save_result_to_json(data, filename):
-    with open(filename, "w") as write_file:
-        json.dump(data, write_file)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+def authenticate_user(db, username: str, password: str):
+    user = get_user(db, username)
+    if not user:
+        return False
+    if not verify_password(password, user.hashed_password):
+        return False
+    return user
+        
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+    user = get_user(db, username=token_data.username)
+    if user is None:
+        raise credentials_exception
+    return user
+
+async def get_current_active_user(
+    current_user: Annotated[DataUser, Depends(get_current_user)]
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token", response_model=Token)
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/users/me/", response_model=DataUser)
+async def read_users_me(
+    current_user: Annotated[DataUser, Depends(get_current_active_user)]
+):
+    return current_user
+
+
+@app.get("/users/me/items/")
+async def read_own_items(
+    current_user: Annotated[DataUser, Depends(get_current_active_user)]
+):
+    return [{"item_id": "Foo", "owner": current_user.username}]
 
 # Mendapatkan seluruh riwayat hasil pemesanan
 @app.get('/hasil')
@@ -109,7 +224,7 @@ async def add_hasil_pemesanan(item: InputUser):
         json.dump(data_barang, write_file)
 
 	
-    for user in user_pemesanan['user_pemesanan'] :
+    for user in user_pemesanan['user_pemesanan']:
         if user['id_user'] == data['id_user']:
             for count in hasil_pemesanan['hasil_pemesanan']:
                 i += 1
@@ -124,8 +239,9 @@ async def add_hasil_pemesanan(item: InputUser):
                 "hasilPemesanan" : hasilPemesanan
             }
             hasil_pemesanan['hasil_pemesanan'].append(result)
-            save_result_to_json(hasil_pemesanan,"hasil_pemesanan.json")
+            save_result_to_json(hasil_pemesanan, "hasil_pemesanan.json")
             return hasilPemesanan
+
         
     
 
@@ -150,3 +266,4 @@ async def delete_user(user_id: int):
 	raise HTTPException(
 		status_code=404, detail=f'User not found'
 	)
+

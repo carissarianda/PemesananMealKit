@@ -2,23 +2,38 @@
     "user_pemesanan": [
         {
             "id_user": 1,
-            "nama_user": "pedro"
+            "nama_user": "pedro",
+            "username": "pedro",
+            "hashed_password" :"",
+            "disabled" : false
         },
         {
             "id_user": 2,
-            "nama_user": "hafidz"
+            "nama_user": "hafidz",
+            "username": "hafidz",
+            "hashed_password" :"",
+            "disabled" : false
         },
         {
             "id_user": 3,
-            "nama_user": "dastin"
+            "nama_user": "dastin",
+            "username": "dastin",
+            "hashed_password" :"$2b$12$E4J/cp8pnGdZ7.W4EsTKIeCc1hR7FtPxO3zrhDWy7kur4DxQPTW.e",
+            "disabled" : false
         },
         {
             "id_user": 4,
-            "nama_user": "hilmi"
+            "nama_user": "hilmi",
+            "username": "hilmi",
+            "hashed_password" :"",
+            "disabled" : false
         },
         {
             "id_user": 5,
-            "nama_user": "carissa"
+            "nama_user": "carissa",
+            "username": "carissa",
+            "hashed_password" :"",
+            "disabled" : false
         }
     ]
 }
