@@ -18,6 +18,7 @@ class InputUser(BaseModel):
     id_barang : int
     nama_barang : str
     jumlah : int
+    waktu : datetime
     
 class DataUser(BaseModel):
     username : str
@@ -47,6 +48,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI()
+def save_result_to_json(data, filename):
+    with open(filename, "w") as write_file:
+        json.dump(data, write_file)
 
 with open("user_pemesanan.json","r") as read_file:
 	user_pemesanan = json.load(read_file)
@@ -193,8 +197,10 @@ async def add_hasil_pemesanan(item: InputUser):
     data = item.dict()
     i = 1
     jumlah = data.get("jumlah")
+    data['waktu'] = data['waktu'].isoformat()
     barang_found = False
     stok_tersedia = False
+    user_found = False
     id_barang = data.get("id_barang")
     for barang in data_barang['data_barang']:
         if barang['id_barang'] == data['id_barang']:
@@ -215,14 +221,16 @@ async def add_hasil_pemesanan(item: InputUser):
 
 
 # Update stok barang di dalam data_barang.json
+    for user in user_pemesanan['user_pemesanan']:
+        if user['id_user'] == data['id_user']:
+            user_found = True
     for barang in data_barang['data_barang']:
-        if barang['id_barang'] == data['id_barang']:
-            barang['stok'] -= jumlah
+        if barang['id_barang'] == data['id_barang'] and user_found == True:
+                barang['stok'] -= jumlah
 
 # Simpan perubahan stok ke dalam file data_barang.json
     with open("data_barang.json", "w") as write_file:
         json.dump(data_barang, write_file)
-
 	
     for user in user_pemesanan['user_pemesanan']:
         if user['id_user'] == data['id_user']:
@@ -236,18 +244,14 @@ async def add_hasil_pemesanan(item: InputUser):
                 "nama_barang": data['nama_barang'],
                 "jumlah" : jumlah,
                 "nominal" : nominal,
-                "hasilPemesanan" : hasilPemesanan
+                "hasilPemesanan" : hasilPemesanan,
+                "waktu" : data['waktu']
             }
             hasil_pemesanan['hasil_pemesanan'].append(result)
             save_result_to_json(hasil_pemesanan, "hasil_pemesanan.json")
             return hasilPemesanan
-
-        
-    
-
-        
     raise HTTPException(
-		status_code=404, detail=f'item not found'
+		status_code=404, detail=f'user not found'
 	)
 
 @app.delete('/user/{user_id}')

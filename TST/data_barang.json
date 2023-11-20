@@ -9,13 +9,13 @@
         {
             "id_barang": 2,
             "nama_barang": "Paket B",
-            "stok": 15,
+            "stok": 91,
             "harga": 70000
         },
         {
             "id_barang": 3,
             "nama_barang": "Paket C",
-            "stok": 0,
+            "stok": 100,
             "harga": 60000
         }
     ]
