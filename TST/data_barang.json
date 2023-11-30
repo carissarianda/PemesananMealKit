@@ -3,19 +3,19 @@
         {
             "id_barang": 1,
             "nama_barang": "Paket A",
-            "stok": 10,
+            "stok": 9999999967,
             "harga": 50000
         },
         {
             "id_barang": 2,
             "nama_barang": "Paket B",
-            "stok": 91,
+            "stok": 99999999999,
             "harga": 70000
         },
         {
             "id_barang": 3,
             "nama_barang": "Paket C",
-            "stok": 100,
+            "stok": 992999,
             "harga": 60000
         }
     ]

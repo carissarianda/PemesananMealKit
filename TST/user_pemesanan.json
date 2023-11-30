@@ -3,27 +3,62 @@
         {
             "id_user": 1,
             "nama_user": "pedro",
-            "username": "pedro"
+            "username": "pedro",
+            "password": "pedro"
         },
         {
             "id_user": 2,
             "nama_user": "hafidz",
-            "username": "hafidz"
+            "username": "hafidz",
+            "password": "hafidz"
         },
         {
             "id_user": 3,
             "nama_user": "dastin",
-            "username": "dastin"
+            "username": "dastin",
+            "password": "dastin"
         },
         {
             "id_user": 4,
             "nama_user": "hilmi",
-            "username": "hilmi"
+            "username": "hilmi",
+            "password": "hilmi"
         },
         {
             "id_user": 5,
             "nama_user": "carissa",
-            "username": "carissa"
+            "username": "carissa",
+            "password": "carissa"
+        },
+        {
+            "id_user": 6,
+            "nama_user": "a",
+            "username": "a",
+            "password": "$2b$12$zVs2R5rzSWGmqTroiXKQnem7vlZBHUV4X5Mhk8ovFzqS9qYggtMT6"
+        },
+        {
+            "id_user": 7,
+            "nama_user": "b",
+            "username": "b",
+            "password": "$2b$12$dyvF47MMRJFDkB7cerfeseG7ZMXsXVeit1yfho0Aob/QFRpdSg2vC"
+        },
+        {
+            "id_user": 8,
+            "nama_user": "hafidzz",
+            "username": "hafidzz",
+            "password": "$2b$12$Z.rS/FWB1K8FG4n7kptDJONIQxvEfU3Bfs4i8wvBZcvue1Ybclffe"
+        },
+        {
+            "id_user": 9,
+            "nama_user": "n",
+            "username": "n",
+            "password": "$2b$12$NO6GLf/LLC0vT0wNEf/1/OAZUL6TVhX9LqDtDsb8qReusZ.oHTD/6"
+        },
+        {
+            "id_user": 10,
+            "nama_user": "m",
+            "username": "m",
+            "password": "$2b$12$enfD7irzzKYjfDd7yWCAvuHwoTPqJpjPIw6qyHsU3ulLSdBHGRk5i"
         }
     ]
 }
